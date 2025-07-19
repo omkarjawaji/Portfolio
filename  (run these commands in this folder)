@@ -1,0 +1,3 @@
+git init
+git add .
+git commit -m "Initial commit: Portfolio site with XP bar, skills, and interactive sections"

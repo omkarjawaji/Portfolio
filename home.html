@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omkar Jawaji - Senior Data Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F0F0F;
+            color: #E0E0E0;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            z-index: 9999;
+        }
+        .glow-effect {
+            position: absolute;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 60%);
+            border-radius: 50%;
+            transition: all 0.1s ease-out;
+            z-index: -1;
+        }
+        .face-container {
+            transition: transform 0.3s ease-out;
+        }
+        .face-container:hover {
+            transform: scale(1.05);
+        }
+        .eye {
+            position: absolute;
+            width: 28%;
+            height: 28%;
+            background: #0F0F0F;
+            border-radius: 50%;
+            top: 35%;
+        }
+        .left-eye { left: 18%; }
+        .right-eye { right: 18%; }
+        .pupil {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            background: #E0E0E0;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+        
+        /* Section Box Styling & Animation */
+        .section-box {
+            background-color: rgba(24, 24, 27, 0.3);
+            border: 1px solid #27272A;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .section-box:hover {
+            border-color: #52525B;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+        }
+        .section-box.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Skill Tag with Icon */
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #222;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .skill-tag:hover {
+            background-color: #E0E0E0;
+            color: #0F0F0F;
+            border-color: #E0E0E0;
+        }
+        .skill-icon {
+            width: 28px;
+            height: 28px;
+            background-color: transparent;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            /* Remove placeholder color */
+        }
+        .skill-tag:hover .skill-icon {
+            background-color: #0F0F0F;
+        }
+        .skill-tag.collected {
+            background-color: #A78BFA;
+            color: white;
+            border-color: #A78BFA;
+            cursor: default;
+        }
+        .skill-tag.collected .skill-icon {
+            background-color: white;
+        }
+
+        /* Portfolio Monitor Styling */
+        .portfolio-monitor {
+            background-color: #18181B;
+            border: 1px solid #3F3F46;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .portfolio-screen {
+            background-color: #0F0F0F;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .portfolio-item {
+            background-color: #18181B;
+            border: 1px solid #27272A;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-4px);
+            border-color: #A78BFA;
+        }
+        .portfolio-item.unlocked {
+             background-color: #27272A;
+             cursor: default;
+        }
+        .portfolio-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .view-diagram-btn {
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            color: #aaa;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            align-self: flex-start;
+        }
+        .view-diagram-btn:hover {
+            background-color: #A78BFA;
+            color: white;
+            border-color: #A78BFA;
+        }
+        
+        /* Work Experience Item Animation */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.3); }
+            70% { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+        }
+        .work-item {
+             padding: 1rem;
+             border-radius: 0.75rem;
+             transition: all 0.3s;
+             cursor: pointer;
+             position: relative;
+             display: flex;
+             align-items: center;
+             gap: 1rem;
+        }
+        .work-item:not(.unlocked):hover {
+            background-color: rgba(39, 39, 42, 0.7);
+            transform: translateY(-2px);
+        }
+        .work-item.unlocked {
+            background-color: rgba(39, 39, 42, 1);
+            cursor: default;
+        }
+        /* Remove the old dot */
+        /* .work-item::after { ... } */
+        /* .work-item.unlocked::after { ... } */
+
+        /* Custom Checkbox for Work Experience */
+        .work-checkbox {
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #A78BFA;
+            border-radius: 6px;
+            background: #18181B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 0 0 rgba(167,139,250,0.2);
+            position: relative;
+        }
+        .work-checkbox:checked {
+            background: linear-gradient(135deg, #a78bfa 60%, #7c3aed 100%);
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167,139,250,0.15);
+        }
+        .work-checkbox:checked::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: white;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+        }
+        .work-checkbox:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        /* XP Bar */
+        .xp-bar-container {
+            position: fixed;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 400px;
+            background-color: #27272A;
+            border-radius: 20px;
+            border: 1.5px solid #3F3F46;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column-reverse;
+            overflow: hidden;
+            box-shadow: 0 0 24px 2px rgba(30,41,59,0.18);
+        }
+        .xp-bar-filler {
+            background-color: #A78BFA;
+            width: 100%;
+            height: 0;
+            transition: height 0.5s cubic-bezier(.4,2,.6,1);
+            box-shadow: 0 0 10px #A78BFA;
+        }
+        
+        /* Floating XP & Milestone Animations */
+        @keyframes float-up {
+            to {
+                transform: translateY(-60px);
+                opacity: 0;
+            }
+        }
+        .xp-float-animation {
+            position: fixed;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #A78BFA;
+            pointer-events: none;
+            animation: float-up 1.5s ease-out forwards;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+        
+        @keyframes milestone-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        .milestone-animation {
+            position: fixed;
+            left: 3.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #facc15;
+            background-color: rgba(0,0,0,0.5);
+            padding: 4px 12px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            animation: milestone-pop 2s ease-in-out;
+            white-space: nowrap;
+            z-index: 1100;
+        }
+
+        /* Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: #18181B;
+            border: 1px solid #3F3F46;
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+    <div class="noise" style="opacity: 0.02;"></div>
+    <div id="cursor-glow" class="glow-effect"></div>
+    <div id="animation-container"></div> <!-- Container for floating animations -->
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-24">
+
+        <!-- Header Section -->
+        <header class="mb-16 sm:mb-24">
+            <nav class="flex items-center justify-between text-base font-semibold px-10 py-3 rounded-full bg-[#1e293b] shadow-lg border border-blue-900/40 max-w-3xl mx-auto"
+                 style="box-shadow: 0 0 24px 2px rgba(30,41,59,0.18); min-width: 600px;">
+                <a href="https://www.linkedin.com/in/omkarjawaji/" target="_blank"
+                   class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    LinkedIn
+                </a>
+                <span class="flex-1 flex justify-center">
+                    <a href="https://github.com/omkarjawaji" target="_blank"
+                       class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        GitHub
+                    </a>
+                </span>
+                <a href="mailto:omkarj.work@gmail.com"
+                   class="px-7 py-2 rounded-full font-bold text-white bg-blue-500 shadow-md transition duration-200 hover:bg-blue-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    Contact
+                </a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="flex flex-col md:flex-row items-center gap-12 mb-24 sm:mb-32">
+            <!-- Left Column: Text -->
+            <div class="md:w-2/3 text-center md:text-left">
+                <h1 class="text-5xl sm:text-7xl font-extrabold leading-tight mb-4 text-blue-700">
+                    Omkar Jawaji
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-400 max-w-xl mx-auto md:mx-0">
+                    Senior Data Engineer crafting robust and scalable data solutions.
+                </p>
+            </div>
+            <!-- Right Column: Image Placeholder -->
+            <div class="md:w-1/3 w-full max-w-sm">
+                <div class="aspect-rectangle bg-zinc-800/50 rounded-3xl border border-zinc-700 flex items-center justify-center overflow-hidden">
+                    <img src="assets/Omkar.PNG" alt="Omkar Jawaji" class="object-cover w-full h-full rounded-3xl" />
+                </div>
+            </div>
+        </section>
+
+
+        <!-- About / Face Section -->
+        <section class="section-box flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="md:w-2/3 text-base text-gray-300 space-y-4">
+                 <h2 class="text-2xl font-bold mb-4 text-center md:text-left">About Me</h2>
+                <p>With a strong foundation in Python and cloud platforms like AWS, I've led initiatives to modernize data architectures, resulting in significant cost savings and performance improvements. My experience spans from developing complex microservices with FastAPI to orchestrating automated workflows with Airflow and Kafka.</p>
+                <p>I thrive on solving complex data challenges, whether it's ensuring data security and compliance, optimizing ETL processes, or deriving actionable insights from large-scale datasets. I'm passionate about building systems that are not only powerful but also reliable and maintainable.</p>
+            </div>
+            <div class="md:w-1/3 w-2/3 max-w-xs mx-auto">
+                <div id="face-box" class="relative w-full aspect-square bg-gray-800/20 rounded-3xl border border-gray-700/50 shadow-lg face-container">
+                    <div class="absolute w-full h-full">
+                        <div class="eye left-eye"><div class="pupil"></div></div>
+                        <div class="eye right-eye"><div class="pupil"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio/Diagrams Section -->
+        <section class="section-box">
+            <h2 class="text-2xl font-bold text-center mb-8">My Portfolio</h2>
+            <div class="portfolio-monitor">
+                 <div class="portfolio-screen">
+                    <div class="portfolio-grid">
+                        <div class="portfolio-item interactive-item" data-id="proj-1" data-xp="25" data-title="Data Collection System Upgrade" data-content="This architecture involved replacing a legacy .NET system with a modern Python/Airflow stack. Key components included dynamically generated Airflow DAGs, ECS Fargate for containerized tasks, and Kafka for real-time event notifications between microservices. The entire infrastructure was defined using CloudFormation for automated deployment.">
+                            <h4 class="portfolio-item-title">Data Collection System Upgrade</h4>
+                            <button class="view-diagram-btn" data-diagram-id="diag-1">View Architecture</button>
+                        </div>
+                        <div class="portfolio-item interactive-item" data-id="proj-2" data-xp="25" data-title="Crypto Price Tracker" data-content="This project used a Django application to handle high-frequency data from Web Sockets. A PostgreSQL database was used for historical data persistence, while Redis provided a cache for recent data to ensure low-latency access. The system was containerized with Docker for scalability and robustness.">
+                             <h4 class="portfolio-item-title">Crypto Price Tracker</h4>
+                            <button class="view-diagram-btn" data-diagram-id="diag-2">View Architecture</button>
+                        </div>
+                        <div class="portfolio-item interactive-item" data-id="proj-3" data-xp="25" data-title="NY Parking Ticket Prediction" data-content="A real-time prediction pipeline was built using Kafka for streaming raw parking data. Spark Streaming was used to process and pre-process the data in real-time, which was then fed into a pre-trained ML model. The entire prediction service was deployed in Docker containers.">
+                             <h4 class="portfolio-item-title">NY Parking Ticket Prediction</h4>
+                            <button class="view-diagram-btn" data-diagram-id="diag-3">View Architecture</button>
+                        </div>
+                        <div class="portfolio-item interactive-item" data-id="proj-4" data-xp="25" data-title="Portfolio Performance Reporting" data-content="This was an automated ETL pipeline to replace manual reporting. It used Selenium for web scraping data, Pandas for data transformation and analysis, and generated Excel reports with charts. A cron job managed the periodic execution and email distribution to stakeholders.">
+                             <h4 class="portfolio-item-title">Portfolio Performance Reporting</h4>
+                            <button class="view-diagram-btn" data-diagram-id="diag-4">View Architecture</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+         <section class="section-box">
+            <h2 class="text-2xl font-bold text-center mb-10">Skills & Technologies</h2>
+            <div class="flex flex-wrap justify-center gap-3">
+                <button class="skill-tag interactive-item" data-id="skill-python" data-xp="10">
+                    <img src="assets/Python.svg" alt="Python" class="skill-icon" />
+                    <span>Python</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-sql" data-xp="10">
+                    <img src="assets/SQL Script.svg" alt="SQL" class="skill-icon" />
+                    <span>SQL</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-fastapi" data-xp="10">
+                    <img src="assets/FastAPI.svg" alt="FastAPI" class="skill-icon" />
+                    <span>FastAPI</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-django" data-xp="10">
+                    <img src="assets/Django.svg" alt="Django" class="skill-icon" />
+                    <span>Django</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-pandas" data-xp="10">
+                    <img src="assets/Pandas.svg" alt="Pandas" class="skill-icon" />
+                    <span>Pandas</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-pyspark" data-xp="10">
+                    <img src="assets/Spark.svg" alt="PySpark" class="skill-icon" />
+                    <span>PySpark</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-aws" data-xp="10">
+                    <img src="assets/AWS.svg" alt="AWS" class="skill-icon" />
+                    <span>AWS</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-lambda" data-xp="10">
+                    <img src="assets/Lambda.svg" alt="Lambda" class="skill-icon" />
+                    <span>Lambda</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-ecs" data-xp="10">
+                    <img src="assets/ECS.svg" alt="ECS" class="skill-icon" />
+                    <span>ECS</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-airflow" data-xp="10">
+                    <img src="assets/Airflow.svg" alt="Airflow" class="skill-icon" />
+                    <span>Airflow</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-kafka" data-xp="10">
+                    <img src="assets/Kafka_3.png" alt="Kafka" class="skill-icon" />
+                    <span>Kafka</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-docker" data-xp="10">
+                    <img src="assets/Docker.svg" alt="Docker" class="skill-icon" />
+                    <span>Docker</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-postgres" data-xp="10">
+                    <img src="assets/Postgres.svg" alt="PostgreSQL" class="skill-icon" />
+                    <span>PostgreSQL</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-databricks" data-xp="10">
+                    <img src="assets/Databricks.svg" alt="Databricks" class="skill-icon" />
+                    <span>Databricks</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-snowflake" data-xp="10">
+                    <img src="assets/Snowflake.svg" alt="Snowflake" class="skill-icon" />
+                    <span>Snowflake</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-redis" data-xp="10">
+                    <img src="assets/Redis.svg" alt="Redis" class="skill-icon" />
+                    <span>Redis</span>
+                </button>
+                    <button class="skill-tag interactive-item" data-id="skill-ecs" data-xp="10">
+                    <img src="assets/ECS.svg" alt="ECS" class="skill-icon" />
+                    <span>ECS</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-jenkins" data-xp="10">
+                    <img src="assets/Jenkins.svg" alt="Jenkins" class="skill-icon" />
+                    <span>Jenkins</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-git" data-xp="10">
+                    <img src="assets/Git.svg" alt="Git" class="skill-icon" />
+                    <span>Git</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-airflow" data-xp="10">
+                    <img src="assets/Airflow.svg" alt="Airflow" class="skill-icon" />
+                    <span>Airflow</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-postman" data-xp="10">
+                    <img src="assets/Postman.svg" alt="Postman" class="skill-icon" />
+                    <span>Postman</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-insomnia" data-xp="10">
+                    <img src="assets/Insomnia.svg" alt="Insomnia" class="skill-icon" />
+                    <span>Insomnia</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-jupyter" data-xp="10">
+                    <img src="assets/Jupyter.svg" alt="Jupyter" class="skill-icon" />
+                    <span>Jupyter</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-s3" data-xp="10">
+                    <img src="assets/S3.svg" alt="S3" class="skill-icon" />
+                    <span>S3</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-sns" data-xp="10">
+                    <img src="assets/SNS.svg" alt="SNS" class="skill-icon" />
+                    <span>SNS</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-sqs" data-xp="10">
+                    <img src="assets/SQS.svg" alt="SQS" class="skill-icon" />
+                    <span>SQS</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-streamlit" data-xp="10">
+                    <img src="assets/Streamlit.svg" alt="Streamlit" class="skill-icon" />
+                    <span>Streamlit</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-powerbi" data-xp="10">
+                    <img src="assets/PowerBI.svg" alt="PowerBI" class="skill-icon" />
+                    <span>PowerBI</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-ubuntu" data-xp="10">
+                    <img src="assets/Ubuntu.svg" alt="Ubuntu" class="skill-icon" />
+                    <span>Ubuntu</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-linux" data-xp="10">
+                    <img src="assets/Linux.svg" alt="Linux" class="skill-icon" />
+                    <span>Linux</span>
+                </button>
+                <button class="skill-tag interactive-item" data-id="skill-windows" data-xp="10">
+                    <img src="assets/Windows 11.svg" alt="Windows" class="skill-icon" />
+                    <span>Windows</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Work Experience Section -->
+        <section class="section-box">
+            <h2 class="text-2xl font-bold mb-8 text-center">Work Experience</h2>
+            <div class="space-y-2">
+                <div class="work-item interactive-item" data-id="work-lti" data-xp="25" data-title="Senior Data Engineer @ LTIMindtree" data-content="Led modernization of a legacy system to a Python-based microservices architecture on AWS. Key achievements: enhanced scalability, developed automated workflows with Airflow and Kafka, designed secure data pipelines, and achieved a 50% cost reduction and 30% faster processing.">
+                    <input type="checkbox" class="work-checkbox pointer-events-none" tabindex="-1" />
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                            <h3 class="text-xl font-semibold">LTIMindtree (for S&P Global)</h3>
+                            <span class="text-gray-400 text-sm mt-1 sm:mt-0">Apr 2023 - Present</span>
+                        </div>
+                        <p class="text-gray-300">Senior Data Engineer</p>
+                    </div>
+                </div>
+                <div class="work-item interactive-item" data-id="work-bw" data-xp="25" data-title="Data Engineer @ Bridgeweave" data-content="Owned and implemented key ETL pipelines, reducing processing time by 95% for one pipeline. Analyzed investor data to optimize marketing, cutting expenditure by 40%. Built a backtesting module for ML models, decreasing reporting time by 80%.">
+                    <input type="checkbox" class="work-checkbox pointer-events-none" tabindex="-1" />
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                            <h3 class="text-xl font-semibold">Bridgeweave</h3>
+                            <span class="text-gray-400 text-sm mt-1 sm:mt-0">Jan 2022 - Mar 2023</span>
+                        </div>
+                        <p class="text-gray-300">Data Engineer</p>
+                    </div>
+                </div>
+                <div class="work-item interactive-item" data-id="work-oracle" data-xp="25" data-title="Database Engineer @ Oracle Health" data-content="Managed 12 simultaneous ETL projects for global hospitals, improving data ingestion turnaround by 25%. Mentored interns and used PowerBI to deliver actionable insights, helping one hospital reduce revenue loss by 30%.">
+                    <input type="checkbox" class="work-checkbox pointer-events-none" tabindex="-1" />
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                            <h3 class="text-xl font-semibold">Oracle Health - Cerner</h3>
+                            <span class="text-gray-400 text-sm mt-1 sm:mt-0">Feb 2020 - Jan 2022</span>
+                        </div>
+                        <p class="text-gray-300">Database Engineer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-16 pt-8 border-t border-gray-800">
+            <p class="text-gray-500">&copy; 2025 Omkar Jawaji.</p>
+        </footer>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="details-modal-title" class="text-2xl font-bold mb-4"></h3>
+            <p id="details-modal-content" class="text-gray-300 mb-6"></p>
+            <button id="details-modal-close" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full w-full transition-colors">Close</button>
+        </div>
+    </div>
+    
+    <!-- Diagram Modal -->
+    <div id="diagram-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="diagram-modal-title" class="text-2xl font-bold mb-4">Architecture Diagram</h3>
+            <div id="diagram-modal-content" class="text-gray-300 mb-6 bg-gray-900/50 h-64 rounded-lg flex items-center justify-center">
+                <p>Interactive diagram placeholder coming soon!</p>
+            </div>
+            <button id="diagram-modal-close" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full w-full transition-colors">Close</button>
+        </div>
+    </div>
+
+    <!-- XP Bar -->
+    <div class="xp-bar-container" id="xp-bar-container">
+        <div class="xp-bar-filler" id="xp-bar-filler"></div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Game State ---
+            let currentXP = 0;
+            const collectedItems = new Set();
+            const totalPossibleXP = Array.from(document.querySelectorAll('.interactive-item')).reduce((sum, item) => sum + parseInt(item.dataset.xp || 0), 0);
+
+            // --- UI Elements ---
+            const xpBarFiller = document.getElementById('xp-bar-filler');
+            const animationContainer = document.getElementById('animation-container');
+            const xpBarContainer = document.getElementById('xp-bar-container');
+            
+            // --- Modal Elements ---
+            const detailsModal = document.getElementById('details-modal');
+            const detailsModalTitle = document.getElementById('details-modal-title');
+            const detailsModalContent = document.getElementById('details-modal-content');
+            const detailsModalClose = document.getElementById('details-modal-close');
+            
+            const diagramModal = document.getElementById('diagram-modal');
+            const diagramModalTitle = document.getElementById('diagram-modal-title');
+            const diagramModalClose = document.getElementById('diagram-modal-close');
+
+            // --- Core Game Logic ---
+            function updateXPBar() {
+                const percentage = Math.min((currentXP / totalPossibleXP) * 100, 100);
+                xpBarFiller.style.height = `${percentage}%`;
+            }
+            
+            function showFloatingXP(amount, event) {
+                const xpAnim = document.createElement('div');
+                xpAnim.textContent = `+${amount} XP`;
+                xpAnim.className = 'xp-float-animation';
+                xpAnim.style.left = `${event.clientX}px`;
+                xpAnim.style.top = `${event.clientY}px`;
+                animationContainer.appendChild(xpAnim);
+
+                xpAnim.addEventListener('animationend', () => {
+                    xpAnim.remove();
+                });
+            }
+
+            function showMilestoneAnimation(text) {
+                const milestoneAnim = document.createElement('div');
+                milestoneAnim.textContent = text;
+                milestoneAnim.className = 'milestone-animation';
+                // Vertically center on the bar
+                const bar = document.getElementById('xp-bar-container');
+                const barRect = bar.getBoundingClientRect();
+                milestoneAnim.style.top = `${barRect.top + barRect.height / 2 - 20}px`;
+                document.body.appendChild(milestoneAnim);
+                milestoneAnim.addEventListener('animationend', () => {
+                    milestoneAnim.remove();
+                });
+            }
+
+            function checkMilestones(oldXP, newXP) {
+                const milestones = [
+                    { xp: 25, text: "+25 XP!" },
+                    { xp: 50, text: "+50 XP!" },
+                    { xp: 75, text: "+75 XP!" },
+                    { xp: totalPossibleXP, text: "YAY 100%!" }
+                ];
+
+                for (const ms of milestones) {
+                    if (oldXP < ms.xp && newXP >= ms.xp) {
+                        showMilestoneAnimation(ms.text);
+                        break; // Show only one milestone at a time
+                    }
+                }
+            }
+            
+            function openDetailsModal(title, content) {
+                detailsModalTitle.textContent = title;
+                detailsModalContent.textContent = content;
+                detailsModal.classList.add('active');
+            }
+            
+            function openDiagramModal(title) {
+                diagramModalTitle.textContent = title;
+                diagramModal.classList.add('active');
+            }
+
+            function closeModal() {
+                detailsModal.classList.remove('active');
+                diagramModal.classList.remove('active');
+            }
+
+            // Event listener for all interactive items
+            document.body.addEventListener('click', (e) => {
+                const diagramBtn = e.target.closest('.view-diagram-btn');
+                const item = e.target.closest('.interactive-item');
+
+                if (diagramBtn) {
+                    e.stopPropagation();
+                    const parentItem = diagramBtn.closest('.interactive-item');
+                    openDiagramModal(parentItem.dataset.title);
+                    return;
+                }
+
+                if (!item) return;
+
+                const id = item.dataset.id;
+
+                // --- Checkbox logic for work experience ---
+                if (item.classList.contains('work-item')) {
+                    const checkbox = item.querySelector('.work-checkbox');
+                    if (!collectedItems.has(id)) {
+                        checkbox.checked = true;
+                    }
+                }
+
+                if (collectedItems.has(id)) {
+                    if (!item.classList.contains('skill-tag')) {
+                        openDetailsModal(item.dataset.title, item.dataset.content);
+                    }
+                    return;
+                }
+
+                collectedItems.add(id);
+                const xpValue = parseInt(item.dataset.xp, 10);
+                const oldXP = currentXP;
+                currentXP += xpValue;
+
+                showFloatingXP(xpValue, e);
+                updateXPBar();
+                checkMilestones(oldXP, currentXP);
+
+                if (item.classList.contains('skill-tag')) {
+                    item.classList.add('collected');
+                } else {
+                    item.classList.add('unlocked');
+                    // Mark checkbox as checked for work experience
+                    if (item.classList.contains('work-item')) {
+                        const checkbox = item.querySelector('.work-checkbox');
+                        checkbox.checked = true;
+                    }
+                    openDetailsModal(item.dataset.title, item.dataset.content);
+                }
+            });
+
+            // On page load, ensure checkboxes reflect unlocked state (if any)
+            document.querySelectorAll('.work-item.unlocked .work-checkbox').forEach(cb => {
+                cb.checked = true;
+            });
+
+            // Listeners for closing the modals
+            detailsModalClose.addEventListener('click', closeModal);
+            diagramModalClose.addEventListener('click', closeModal);
+            document.addEventListener('click', (e) => {
+                if (e.target === detailsModal || e.target === diagramModal) {
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+
+            // --- Eye Tracking ---
+            const faceBox = document.getElementById('face-box');
+            const pupils = document.querySelectorAll('.pupil');
+            if (faceBox) {
+                faceBox.addEventListener('mousemove', (e) => {
+                    const rect = faceBox.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    const angle = Math.atan2(y, x);
+                    const distance = Math.min(Math.sqrt(x * x + y * y) * 0.1, 15);
+                    const pupilX = Math.cos(angle) * distance;
+                    const pupilY = Math.sin(angle) * distance;
+                    pupils.forEach(pupil => {
+                        pupil.style.transform = `translate(-50%, -50%) translate(${pupilX}px, ${pupilY}px)`;
+                    });
+                });
+                faceBox.addEventListener('mouseleave', () => {
+                    pupils.forEach(pupil => {
+                        pupil.style.transform = 'translate(-50%, -50%) translate(0, 0)';
+                    });
+                });
+            }
+
+            // --- Cursor Glow Effect ---
+            const cursorGlow = document.getElementById('cursor-glow');
+            document.addEventListener('mousemove', (e) => {
+                const size = 300;
+                cursorGlow.style.width = `${size}px`;
+                cursorGlow.style.height = `${size}px`;
+                cursorGlow.style.left = `${e.clientX - size / 2}px`;
+                cursorGlow.style.top = `${e.clientY - size / 2}px`;
+            });
+
+            // --- Section Scroll Animation ---
+            const sections = document.querySelectorAll('.section-box');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Initialize XP bar
+            updateXPBar();
+        });
+    </script>
+
+</body>
+</html>
+    </script>
+
+</body>
+</html>
