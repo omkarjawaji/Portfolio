@@ -358,6 +358,57 @@
             transform: scale(1);
         }
 
+        /* Hamburger Menu Styling */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 1101;
+        }
+        .hamburger span {
+            height: 4px;
+            width: 28px;
+            background: #fff;
+            margin: 4px 0;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        @media (max-width: 700px) {
+            nav.max-w-3xl {
+                min-width: unset !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                justify-content: flex-end !important;
+                background: #1e293b;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .navbar-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100vw;
+                background: #1e293b;
+                z-index: 1100;
+                border-radius: 0 0 1.5rem 1.5rem;
+                box-shadow: 0 8px 24px 0 rgba(30,41,59,0.18);
+            }
+            .navbar-links.open {
+                display: flex;
+            }
+            .navbar-links a, .navbar-links span {
+                width: 100%;
+                text-align: center;
+                padding: 1rem 0;
+                border-bottom: 1px solid #334155;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -370,22 +421,27 @@
 
         <!-- Header Section -->
         <header class="mb-16 sm:mb-24">
-            <nav class="flex items-center justify-between text-base font-semibold px-10 py-3 rounded-full bg-[#1e293b] shadow-lg border border-blue-900/40 max-w-3xl mx-auto"
+            <nav class="flex items-center justify-between text-base font-semibold px-10 py-3 rounded-full bg-[#1e293b] shadow-lg border border-blue-900/40 max-w-3xl mx-auto relative"
                  style="box-shadow: 0 0 24px 2px rgba(30,41,59,0.18); min-width: 600px;">
-                <a href="https://www.linkedin.com/in/omkarjawaji/" target="_blank"
-                   class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    LinkedIn
-                </a>
-                <span class="flex-1 flex justify-center">
+                <div class="hamburger" id="hamburger-menu" aria-label="Open navigation" tabindex="0">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="flex w-full justify-between navbar-links" id="navbar-links">
+                    <a href="https://www.linkedin.com/in/omkarjawaji/" target="_blank"
+                       class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        LinkedIn
+                    </a>
                     <a href="https://github.com/omkarjawaji" target="_blank"
                        class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         GitHub
                     </a>
-                </span>
-                <a href="mailto:omkarj.work@gmail.com"
-                   class="px-7 py-2 rounded-full font-bold text-white bg-blue-500 shadow-md transition duration-200 hover:bg-blue-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-200">
-                    Contact
-                </a>
+                    <a href="mailto:omkarj.work@gmail.com"
+                       class="px-7 py-2 rounded-full font-bold text-white bg-blue-500 shadow-md transition duration-200 hover:bg-blue-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        Contact
+                    </a>
+                </div>
             </nav>
         </header>
 
@@ -677,137 +733,137 @@
 
             // --- Core Game Logic ---
             function updateXPBar() {
-                const percentage = Math.min((currentXP / totalPossibleXP) * 100, 100);
-                xpBarFiller.style.height = `${percentage}%`;
+            const percentage = Math.min((currentXP / totalPossibleXP) * 100, 100);
+            xpBarFiller.style.height = `${percentage}%`;
             }
             
             function showFloatingXP(amount, event) {
-                const xpAnim = document.createElement('div');
-                xpAnim.textContent = `+${amount} XP`;
-                xpAnim.className = 'xp-float-animation';
-                xpAnim.style.left = `${event.clientX}px`;
-                xpAnim.style.top = `${event.clientY}px`;
-                animationContainer.appendChild(xpAnim);
+            const xpAnim = document.createElement('div');
+            xpAnim.textContent = `+${amount} XP`;
+            xpAnim.className = 'xp-float-animation';
+            xpAnim.style.left = `${event.clientX}px`;
+            xpAnim.style.top = `${event.clientY}px`;
+            animationContainer.appendChild(xpAnim);
 
-                xpAnim.addEventListener('animationend', () => {
-                    xpAnim.remove();
-                });
+            xpAnim.addEventListener('animationend', () => {
+                xpAnim.remove();
+            });
             }
 
             function showMilestoneAnimation(text) {
-                const milestoneAnim = document.createElement('div');
-                milestoneAnim.textContent = text;
-                milestoneAnim.className = 'milestone-animation';
-                // Vertically center on the bar
-                const bar = document.getElementById('xp-bar-container');
-                const barRect = bar.getBoundingClientRect();
-                milestoneAnim.style.top = `${barRect.top + barRect.height / 2 - 20}px`;
-                document.body.appendChild(milestoneAnim);
-                milestoneAnim.addEventListener('animationend', () => {
-                    milestoneAnim.remove();
-                });
+            const milestoneAnim = document.createElement('div');
+            milestoneAnim.textContent = text;
+            milestoneAnim.className = 'milestone-animation';
+            // Vertically center on the bar
+            const bar = document.getElementById('xp-bar-container');
+            const barRect = bar.getBoundingClientRect();
+            milestoneAnim.style.top = `${barRect.top + barRect.height / 2 - 20}px`;
+            document.body.appendChild(milestoneAnim);
+            milestoneAnim.addEventListener('animationend', () => {
+                milestoneAnim.remove();
+            });
             }
 
             function checkMilestones(oldXP, newXP) {
-                const milestones = [
-                    { xp: 25, text: "+25 XP!" },
-                    { xp: 50, text: "+50 XP!" },
-                    { xp: 75, text: "+75 XP!" },
-                    { xp: totalPossibleXP, text: "YAY 100%!" }
-                ];
+            const milestones = [
+                { xp: 25, text: "+25 XP!" },
+                { xp: 50, text: "+50 XP!" },
+                { xp: 75, text: "+75 XP!" },
+                { xp: totalPossibleXP, text: "YAY 100%!" }
+            ];
 
-                for (const ms of milestones) {
-                    if (oldXP < ms.xp && newXP >= ms.xp) {
-                        showMilestoneAnimation(ms.text);
-                        break; // Show only one milestone at a time
-                    }
+            for (const ms of milestones) {
+                if (oldXP < ms.xp && newXP >= ms.xp) {
+                showMilestoneAnimation(ms.text);
+                break; // Show only one milestone at a time
                 }
+            }
             }
             
             function openDetailsModal(title, content) {
-                detailsModalTitle.textContent = title;
-                detailsModalContent.textContent = content;
-                detailsModal.classList.add('active');
+            detailsModalTitle.textContent = title;
+            detailsModalContent.textContent = content;
+            detailsModal.classList.add('active');
             }
             
             function openDiagramModal(title) {
-                diagramModalTitle.textContent = title;
-                diagramModal.classList.add('active');
+            diagramModalTitle.textContent = title;
+            diagramModal.classList.add('active');
             }
 
             function closeModal() {
-                detailsModal.classList.remove('active');
-                diagramModal.classList.remove('active');
+            detailsModal.classList.remove('active');
+            diagramModal.classList.remove('active');
             }
 
             // Event listener for all interactive items
             document.body.addEventListener('click', (e) => {
-                const diagramBtn = e.target.closest('.view-diagram-btn');
-                const item = e.target.closest('.interactive-item');
+            const diagramBtn = e.target.closest('.view-diagram-btn');
+            const item = e.target.closest('.interactive-item');
 
-                if (diagramBtn) {
-                    e.stopPropagation();
-                    const parentItem = diagramBtn.closest('.interactive-item');
-                    openDiagramModal(parentItem.dataset.title);
-                    return;
+            if (diagramBtn) {
+                e.stopPropagation();
+                const parentItem = diagramBtn.closest('.interactive-item');
+                openDiagramModal(parentItem.dataset.title);
+                return;
+            }
+
+            if (!item) return;
+
+            const id = item.dataset.id;
+
+            // --- Checkbox logic for work experience ---
+            if (item.classList.contains('work-item')) {
+                const checkbox = item.querySelector('.work-checkbox');
+                if (!collectedItems.has(id)) {
+                checkbox.checked = true;
                 }
+            }
 
-                if (!item) return;
+            if (collectedItems.has(id)) {
+                if (!item.classList.contains('skill-tag')) {
+                openDetailsModal(item.dataset.title, item.dataset.content);
+                }
+                return;
+            }
 
-                const id = item.dataset.id;
+            collectedItems.add(id);
+            const xpValue = parseInt(item.dataset.xp, 10);
+            const oldXP = currentXP;
+            currentXP += xpValue;
 
-                // --- Checkbox logic for work experience ---
+            showFloatingXP(xpValue, e);
+            updateXPBar();
+            checkMilestones(oldXP, currentXP);
+
+            if (item.classList.contains('skill-tag')) {
+                item.classList.add('collected');
+            } else {
+                item.classList.add('unlocked');
+                // Mark checkbox as checked for work experience
                 if (item.classList.contains('work-item')) {
-                    const checkbox = item.querySelector('.work-checkbox');
-                    if (!collectedItems.has(id)) {
-                        checkbox.checked = true;
-                    }
+                const checkbox = item.querySelector('.work-checkbox');
+                checkbox.checked = true;
                 }
-
-                if (collectedItems.has(id)) {
-                    if (!item.classList.contains('skill-tag')) {
-                        openDetailsModal(item.dataset.title, item.dataset.content);
-                    }
-                    return;
-                }
-
-                collectedItems.add(id);
-                const xpValue = parseInt(item.dataset.xp, 10);
-                const oldXP = currentXP;
-                currentXP += xpValue;
-
-                showFloatingXP(xpValue, e);
-                updateXPBar();
-                checkMilestones(oldXP, currentXP);
-
-                if (item.classList.contains('skill-tag')) {
-                    item.classList.add('collected');
-                } else {
-                    item.classList.add('unlocked');
-                    // Mark checkbox as checked for work experience
-                    if (item.classList.contains('work-item')) {
-                        const checkbox = item.querySelector('.work-checkbox');
-                        checkbox.checked = true;
-                    }
-                    openDetailsModal(item.dataset.title, item.dataset.content);
-                }
+                openDetailsModal(item.dataset.title, item.dataset.content);
+            }
             });
 
             // On page load, ensure checkboxes reflect unlocked state (if any)
             document.querySelectorAll('.work-item.unlocked .work-checkbox').forEach(cb => {
-                cb.checked = true;
+            cb.checked = true;
             });
 
             // Listeners for closing the modals
             detailsModalClose.addEventListener('click', closeModal);
             diagramModalClose.addEventListener('click', closeModal);
             document.addEventListener('click', (e) => {
-                if (e.target === detailsModal || e.target === diagramModal) {
-                    closeModal();
-                }
+            if (e.target === detailsModal || e.target === diagramModal) {
+                closeModal();
+            }
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') closeModal();
             });
 
 
@@ -815,50 +871,116 @@
             const faceBox = document.getElementById('face-box');
             const pupils = document.querySelectorAll('.pupil');
             if (faceBox) {
-                faceBox.addEventListener('mousemove', (e) => {
-                    const rect = faceBox.getBoundingClientRect();
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    const angle = Math.atan2(y, x);
-                    const distance = Math.min(Math.sqrt(x * x + y * y) * 0.1, 15);
-                    const pupilX = Math.cos(angle) * distance;
-                    const pupilY = Math.sin(angle) * distance;
-                    pupils.forEach(pupil => {
-                        pupil.style.transform = `translate(-50%, -50%) translate(${pupilX}px, ${pupilY}px)`;
-                    });
+            faceBox.addEventListener('mousemove', (e) => {
+                const rect = faceBox.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const angle = Math.atan2(y, x);
+                const distance = Math.min(Math.sqrt(x * x + y * y) * 0.1, 15);
+                const pupilX = Math.cos(angle) * distance;
+                const pupilY = Math.sin(angle) * distance;
+                pupils.forEach(pupil => {
+                pupil.style.transform = `translate(-50%, -50%) translate(${pupilX}px, ${pupilY}px)`;
                 });
-                faceBox.addEventListener('mouseleave', () => {
-                    pupils.forEach(pupil => {
-                        pupil.style.transform = 'translate(-50%, -50%) translate(0, 0)';
-                    });
+            });
+            faceBox.addEventListener('mouseleave', () => {
+                pupils.forEach(pupil => {
+                pupil.style.transform = 'translate(-50%, -50%) translate(0, 0)';
                 });
+            });
             }
 
             // --- Cursor Glow Effect ---
             const cursorGlow = document.getElementById('cursor-glow');
             document.addEventListener('mousemove', (e) => {
-                const size = 300;
-                cursorGlow.style.width = `${size}px`;
-                cursorGlow.style.height = `${size}px`;
-                cursorGlow.style.left = `${e.clientX - size / 2}px`;
-                cursorGlow.style.top = `${e.clientY - size / 2}px`;
+            const size = 300;
+            cursorGlow.style.width = `${size}px`;
+            cursorGlow.style.height = `${size}px`;
+            cursorGlow.style.left = `${e.clientX - size / 2}px`;
+            cursorGlow.style.top = `${e.clientY - size / 2}px`;
             });
 
             // --- Section Scroll Animation ---
             const sections = document.querySelectorAll('.section-box');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                }
+            });
             }, { threshold: 0.1 });
             sections.forEach(section => {
-                observer.observe(section);
+            observer.observe(section);
             });
             
             // Initialize XP bar
             updateXPBar();
+
+            // Hamburger menu logic
+            const hamburger = document.getElementById('hamburger-menu');
+            const navLinks = document.getElementById('navbar-links');
+
+            function toggleMenu() {
+                navLinks.classList.toggle('open');
+                hamburger.classList.toggle('active');
+                // Animate hamburger icon
+                const spans = hamburger.querySelectorAll('span');
+                if (hamburger.classList.contains('active')) {
+                    spans[0].style.transform = 'translateY(8px) rotate(45deg)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'translateY(-8px) rotate(-45deg)';
+                } else {
+                    spans[0].style.transform = '';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = '';
+                }
+            }
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMenu();
+            });
+            hamburger.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleMenu();
+                }
+            });
+
+            // Close menu on outside click (mobile)
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 700 && navLinks.classList.contains('open')) {
+                    if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                        navLinks.classList.remove('open');
+                        hamburger.classList.remove('active');
+                        // Reset hamburger icon
+                        const spans = hamburger.querySelectorAll('span');
+                        spans[0].style.transform = '';
+                        spans[1].style.opacity = '1';
+                        spans[2].style.transform = '';
+                    }
+                }
+            });
+
+            // Responsive: Hide/show nav links based on menu state
+            function handleResize() {
+                if (window.innerWidth > 700) {
+                    navLinks.classList.remove('open');
+                    hamburger.classList.remove('active');
+                    // Reset hamburger icon
+                    const spans = hamburger.querySelectorAll('span');
+                    if (spans.length === 3) {
+                        spans[0].style.transform = '';
+                        spans[1].style.opacity = '1';
+                        spans[2].style.transform = '';
+                    }
+                }
+            }
+            window.addEventListener('resize', handleResize);
+
+            // Initial state: hide nav links on mobile
+            if (window.innerWidth <= 700) {
+                navLinks.classList.remove('open');
+            }
         });
     </script>
 
