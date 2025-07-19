@@ -386,6 +386,7 @@
             }
             .hamburger {
                 display: flex;
+                z-index: 1200;
             }
             .navbar-links {
                 display: none;
@@ -398,15 +399,45 @@
                 z-index: 1100;
                 border-radius: 0 0 1.5rem 1.5rem;
                 box-shadow: 0 8px 24px 0 rgba(30,41,59,0.18);
+                transition: max-height 0.3s cubic-bezier(.4,2,.6,1), opacity 0.2s;
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                padding: 0;
             }
             .navbar-links.open {
                 display: flex;
+                max-height: 400px;
+                opacity: 1;
             }
-            .navbar-links a, .navbar-links span {
+            .navbar-links a {
                 width: 100%;
                 text-align: center;
                 padding: 1rem 0;
+                font-weight: 600;
+                font-size: 1.1rem;
+                background: transparent;
+                transition: background 0.2s, color 0.2s;
+                border: none;
+                border-radius: 0;
+                margin: 0;
+            }
+            .navbar-links a:first-child {
+                border-top-left-radius: 0 0 0 0;
+                border-top-right-radius: 0 0 0 0;
+            }
+            .navbar-links a:not(:last-child) {
                 border-bottom: 1px solid #334155;
+            }
+            .navbar-links a:last-child {
+                border-bottom: none;
+                border-radius: 0 0 1.5rem 1.5rem;
+            }
+            .navbar-links a:active,
+            .navbar-links a:focus,
+            .navbar-links a:hover {
+                background: #334155;
+                color: #fff;
             }
         }
     </style>
@@ -428,17 +459,17 @@
                     <span></span>
                     <span></span>
                 </div>
-                <div class="flex w-full justify-between navbar-links" id="navbar-links">
+                <div class="flex w-full justify-between navbar-links" id="navbar-links" style="overflow:hidden;">
                     <a href="https://www.linkedin.com/in/omkarjawaji/" target="_blank"
-                       class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                       class="px-6 py-2 rounded-none text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         LinkedIn
                     </a>
                     <a href="https://github.com/omkarjawaji" target="_blank"
-                       class="px-6 py-2 rounded-full text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                       class="px-6 py-2 rounded-none text-white bg-transparent transition duration-200 hover:bg-blue-800/30 hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         GitHub
                     </a>
                     <a href="mailto:omkarj.work@gmail.com"
-                       class="px-7 py-2 rounded-full font-bold text-white bg-blue-500 shadow-md transition duration-200 hover:bg-blue-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-200">
+                       class="px-7 py-2 rounded font-bold text-white bg-blue-500 shadow-md transition duration-200 hover:bg-blue-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-200">
                         Contact
                     </a>
                 </div>
